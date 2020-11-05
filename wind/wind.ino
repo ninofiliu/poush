@@ -68,10 +68,9 @@ void setup() {
 }
 
 void loop() {
-  /*float dir = ((float)analogRead(A0))/1000;
+  float dir = ((float)analogRead(A0))/1000;
   dir_stable = 0.9 * dir_stable + 0.1 * dir;
-  write_rgbw(dir_stable, 0.5);*/
-  write_rgbw(h, 0.5);
-  h = fmod(h+0.001, 1);
-  delay(10);
+  write_rgbw(fmod(dir_stable+0.1, 1), 0.5);
+  Serial.println(dir_stable);
+  delay(50);
 }
