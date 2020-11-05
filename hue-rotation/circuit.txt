@@ -1,3 +1,0 @@
-uno.gnd - vma432.gnd
-uno.5v - vma432.vcc
-uno.3 - vma432.sig

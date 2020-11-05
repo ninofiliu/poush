@@ -1,5 +1,9 @@
 #include <DmxSimple.h>
 
+// uno.gnd - vma432.gnd
+// uno.5v - vma432.vcc
+// uno.3 - vma432.sig
+
 void write_rgb(int r, int g, int b) {
   DmxSimple.write(1, r);
   DmxSimple.write(2, g);
