@@ -61,6 +61,9 @@ void write_rgbw(float h, float l) {
 }
 
 float dir_stable = 0;
+float vel_stable = 0;
+float min_vel = 20;
+float max_vel = 150;
 float h = 0;
 
 void setup() {
@@ -70,7 +73,17 @@ void setup() {
 void loop() {
   float dir = ((float)analogRead(A0))/1000;
   dir_stable = 0.9 * dir_stable + 0.1 * dir;
-  write_rgbw(fmod(dir_stable+0.1, 1), 0.5);
-  Serial.println(dir_stable);
-  delay(50);
+  float vel = (float)analogRead(A1);
+  vel_stable = 0.9 * vel_stable + 0.1 * vel;
+  float l;
+  if (vel_stable < min_vel) { l = 0.3; }
+  else if (vel_stable > max_vel) { l = 0.9; }
+  else { l = 0.3 + 0.6 * (vel_stable-min_vel)/(max_vel-min_vel); }
+  Serial.println(100*l);
+  
+  write_rgbw(
+    fmod(dir_stable+0.1, 1),
+    l
+  );
+  delay(10);
 }
