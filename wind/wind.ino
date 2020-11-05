@@ -29,16 +29,49 @@ void write_hl(float h, float l) {
   );
 }
 
-float dir_stable;
+void write_rgbw(float h, float l) {
+  float r = 0;
+  float g = 0;
+  float b = 0;
+  float w = 0;
+
+  if (h<0.25) {
+    r = 4*h;
+    w = 1-4*h;
+  } else if (h<0.5) {
+    g = 4*(h-0.25);
+    r = 4*(0.5-h);
+  } else if(h<0.75) {
+    b = 4*(h-0.5);
+    g = 4*(0.75-h);
+  } else {
+    w = 4*(h-0.75);
+    b = 4*(1-h);
+  }
+
+  r = w>r ? w : r;
+  g = w>g ? w : g;
+  b = w>b ? w : b;
+
+  write_rgb(
+    (int)(255. * r * l),
+    (int)(255. * g * l),
+    (int)(255. * b * l)
+  );
+}
+
+float dir_stable = 0;
+float h = 0;
 
 void setup() {
-  dir_stable = 0;
   Serial.begin(9600);
 }
 
 void loop() {
-  float dir = ((float)analogRead(A0))/1000;
+  /*float dir = ((float)analogRead(A0))/1000;
   dir_stable = 0.9 * dir_stable + 0.1 * dir;
-  write_hl(dir_stable, 0.5);
+  write_rgbw(dir_stable, 0.5);*/
+  write_rgbw(h, 0.5);
+  h = fmod(h+0.001, 1);
   delay(10);
 }

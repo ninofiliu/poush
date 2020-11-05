@@ -28,3 +28,36 @@ void write_hl(float h, float l) {
     (int)(255. * b * l)
   );
 }
+
+void write_rgbw(float h) {
+  float r = 0;
+  float g = 0;
+  float b = 0;
+
+  if (h<0.25) {
+    r = 4*h;
+    w = 4*(1-h);
+  }
+  if (0.25<h && h<0.5) {
+    g = 4*(h-0.25);
+    r = 4*(0.5-h);
+  }
+  if (0.5<h && 0.75) {
+    b = 4*(h-0.5);
+    g = 4*(0.75-h);
+  }
+  if (0.75<h) {
+    w = 4*(h-0.75);
+    b = 4*(1-h);
+  }
+
+  r = w>r ? w : r;
+  g = w>g ? w : g;
+  b = w>b ? w : b;
+
+  write_rgb(
+    (int)(255. * r * l),
+    (int)(255. * g * l),
+    (int)(255. * b * l)
+  );
+}
