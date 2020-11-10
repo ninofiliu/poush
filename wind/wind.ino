@@ -1,3 +1,5 @@
+#include <Wire.h>
+#include "RTClib.h"
 #include <DmxSimple.h>
 
 // UTILS
@@ -68,29 +70,45 @@ float min_vel = 20;
 float max_vel = 150;
 float min_light = 0.3;
 float max_light = 0.9;
+float min_hour = 9;
+float max_hour = 24;
 
 // GLOBALS
 
 float h = 0;
 float dir_stable = 0;
 float vel_stable = 0;
+RTC_DS1307 rtc;
 
 void setup() {
   Serial.begin(9600);
+  rtc.begin();
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 }
 
 void loop() {
+  DateTime now = rtc.now();
+  if (now.hour() < min_hour || now.hour() > max_hour) {
+    write_rgb(0,0,0);
+    delay(10000);
+    return;
+  }
+
   float dir = ((float)analogRead(A0))/1000;
   dir_stable = 0.9 * dir_stable + 0.1 * dir;
   float hue = fmod(dir_stable+0.1, 1);
 
   float vel = (float)analogRead(A1);
-  vel_stable = 0.9 * vel_stable + 0.1 * vel;
+  vel_stable = 0.95 * vel_stable + 0.05 * vel;
   float light;
   if (vel_stable < min_vel) { light = min_light; }
   else if (vel_stable > max_vel) { light = max_light; }
   else { light = min_light + (vel_stable-min_vel) * (max_light-min_light) / (max_vel-min_vel); }
   
   write_rgbw(hue, light);
-  delay(10);
+  Serial.print(100*hue);
+  Serial.print(",");
+  Serial.print(100*light);
+  Serial.println();
+  delay(50);
 }
