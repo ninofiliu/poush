@@ -2,7 +2,7 @@
 
 void interpolate(float dst[], float cursor, float from[], float to[]) {
   for (int i = 0; i < 3; i++) {
-    dst[i] = (1 - cursor) * from[i] + cursor * to[i];
+    dst[i] = (1.0 - cursor) * from[i] + cursor * to[i];
   }
 };
 
@@ -14,9 +14,32 @@ void interpolate_2(float dst[], float cursor, float c0[], float c1[], float c2[]
   }
 }
 
+void interpolate_many(float *dst, float cursor, float *colors) {
+  int index = (int)cursor;
+  float sub_cursor = cursor - (float)index;
+  float from[3];
+  float to[3];
+  for (int i = 0; i < 3; i++) {
+    from[i] = colors[3 * index + i];
+    to[i] = colors[3 * (index + 1) + i];
+  }
+  interpolate(dst, sub_cursor, from, to);
+}
+
 //
 
 int main() {
+  float dst[3] = {0,0,0};
+  float colors[12] = {
+    1,0,0,
+    0,1,0,
+    0,0,1,
+    1,1,1
+  };
+  for (float cursor = 0; cursor < 3; cursor += 0.1) {
+    interpolate_many(dst, cursor, colors);
+    printf("%f : %f %f %f\n", cursor, dst[0], dst[1], dst[2]);
+  }
   return 0;
 }
 
